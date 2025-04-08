@@ -9,6 +9,7 @@ from discord.ext import commands
 
 import random
 import io
+import os
 import requests
 import pytz
 import emoji
@@ -28,11 +29,14 @@ timezone = pytz.timezone("Europe/Paris")
 
 ### STORAGE LOCATION, DATA EXTRACTION
 
-#location = ""
-#os.chdir(location)
+location = input("Path to the data.txt file: ")
+if len(location) > 1:
+    os.chdir(location)
+else:
+    location = "data.txt"
 
 global token
-with open("data.txt", 'r') as file:
+with open(location + "/data.txt", 'r') as file:
     lines = file.readlines()
     token = lines[1]
     log_channel_id = int(lines[7])
