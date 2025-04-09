@@ -5,7 +5,7 @@ INSERT HERE
 INSERT HERE
 
 # Log channel ID
-INSERT HERE
+Prout
 
 # Archives category ID
-INSERT HERE
+Prout
