@@ -29,14 +29,8 @@ timezone = pytz.timezone("Europe/Paris")
 
 ### STORAGE LOCATION, DATA EXTRACTION
 
-location = input("Path to the data.txt file: ")
-if len(location) > 1:
-    os.chdir(location)
-else:
-    location = "data.txt"
-
 global token
-with open(location + "/data.txt", 'r') as file:
+with open("data.txt", 'r') as file:
     lines = file.readlines()
     token = lines[1]
     log_channel_id = int(lines[7])
@@ -52,25 +46,7 @@ activity = discord.Game("préparer une nouvelle Désuétude. (uc!help)")
 
 URL_LOGO = "https://cdn.discordapp.com/attachments/1105818718518395020/1105860967218298920/Logo_V4_Uchronia.png"
 
-### PERMISSIONS ERROR EMBED
-
-def erreur_permissions():
-    embed_error.clear_fields()
-    embed_error.set_footer(text=f"Erreur")
-    embed_error.add_field(name=f"Désolé !",value=f"Il semblerait que vous ne disposez pas des permissions nécessaires à l'exécution de cette commande. Contactez un maître de jeu si vous pensez rencontrer une erreur.")
-    return embed_error
-
-# Answer
-embed_rep = discord.Embed(
-        colour = discord.Colour.blue()
-    )
-embed_rep.set_footer(text = "Uchronia", icon_url = URL_LOGO)
-
-#Error
-embed_error = discord.Embed(
-        colour = discord.Colour.red()
-    )
-embed_error.set_footer(text = "Uchronia", icon_url = URL_LOGO)
+### EMBED
 
 #Validation
 embed_val = discord.Embed(
@@ -137,10 +113,6 @@ async def creation_pays(ctx, *options):
     embed_val.add_field(name=f"Création du pays validée !",value=f"Le rôle, la catégorie et l'ensemble des salons ont été correctement configurés !")
     await ctx.send(embed=embed_val)
 
-@creation_pays.error
-async def creation_pays_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
 
 ### COUNTRY DELETING
 
@@ -160,11 +132,6 @@ async def suppression_pays(ctx, *, nom_du_pays):
     embed_val.set_footer(text=f"Suppression de pays")
     embed_val.add_field(name=f"Suppression de pays terminée !",value=f"Le rôle, la catégorie et l'ensemble des salons ont été correctement supprimés !")
     await ctx.send(embed=embed_val)
-
-@suppression_pays.error
-async def suppression_pays_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
 
 ### COUNTRY ARCHIVING
 
@@ -195,11 +162,6 @@ async def arch_pays(ctx, *, nom_du_pays):
     embed_val.set_footer(text=f"Archivage de pays")
     embed_val.add_field(name=f"Archivage de pays terminé !",value=f"Le rôle et la catégorie ont été supprimés, et l'ensemble des salons ont été correctement archivés !")
     await ctx.send(embed=embed_val)
-
-@arch_pays.error
-async def arch_pays_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
 
 #Archivage au format PDF
 
@@ -617,13 +579,6 @@ async def roll(ctx, tirage):
     embed_tempo.add_field(name=f"Résultat",value=reponse)
     await ctx.send(embed=embed_tempo)
 
-@roll.error
-async def creation_pays_error(ctx):
-    embed_error.clear_fields()
-    embed_error.set_footer(text=f"Erreur")
-    embed_error.add_field(name=f"Désolé !",value=f"Votre lancer de dé n'a pas été reconnu. Contactez un maître de jeu si vous pensez rencontrer une erreur.")
-    await ctx.send(embed = embed_error)
-
 
 ### ONLINE, OFFLINE, SHUTDOWN
 
@@ -635,11 +590,6 @@ async def offline(ctx):
     await bot.change_presence(status=discord.Status.offline, activity=None)
     await ctx.send("Non, attendez ! Ne m'éteignez pas ! Vous n'avez... pas... enc... ore... tout... vu... *le bot s'est éteint*")
 
-@offline.error
-async def offline_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
-
 # Online
 
 @bot.command(name="online", help="Affiche le bot en ligne")
@@ -648,26 +598,17 @@ async def online(ctx):
     await bot.change_presence(status=discord.Status.online, activity=activity)
     await ctx.send("*s'allume* Merci d'avoir choisi Uchro-Bot pour détruire Nolara.")
 
-@online.error
-async def online_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
-
 # Shutdown
 
 @bot.command(name="shutdown", help="Eteint le bot")
 @discord.ext.commands.has_permissions(administrator=True)
 async def shutdown(ctx):
     await bot.change_presence(status=discord.Status.offline, activity=None)
-    embed_error.clear_fields()
+    embed_error = discord.Embed(colour = discord.Colour.red())
+    embed_error.set_footer(text = "Uchronia", icon_url = URL_LOGO)
     embed_error.add_field(name=f"*Bip bip bip*",value=f"Uchro-Bot s'est correctement éteint.")
     await bot.get_channel(log_channel_id).send(embed=embed_error)
     await ctx.bot.close()
-
-@shutdown.error
-async def shutdown_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
 
 
 ### MISC
@@ -675,7 +616,8 @@ async def shutdown_error(ctx, error):
 # Ping
 @bot.command(name="ping", help="Renvoie la latence du bot")
 async def ping(ctx):
-    embed_rep.clear_fields()
+    embed_rep = discord.Embed(colour = discord.Colour.blue())
+    embed_rep.set_footer(text = "Uchronia", icon_url = URL_LOGO)
     embed_rep.add_field(name=f"Pong !",value=f"Latence de {round(bot.latency * 1000)} ms")
     await ctx.send(embed=embed_rep)
 
@@ -685,21 +627,11 @@ async def ping(ctx):
 async def wide(ctx):
     await ctx.send("https://cdn.discordapp.com/attachments/537667794112610314/1084138741670625511/Wide2.mp4")
 
-@wide.error
-async def wide_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
-
 #Brain_power
 @bot.command(name="brain_power", help="Mystère !")
 @discord.ext.commands.has_permissions(administrator=True)
 async def brain_power(ctx):
     await ctx.send("https://cdn.discordapp.com/attachments/1105818718518395020/1122980909453410364/Brain_Power.mp4")
-
-@brain_power.error
-async def brain_power_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
 
 #president
 @bot.command(name="president", help="Mystère !")
@@ -707,10 +639,14 @@ async def brain_power_error(ctx, error):
 async def president(ctx):
     await ctx.send("https://cdn.discordapp.com/attachments/1105818718518395020/1123715876202483792/CHIRAC_-_Je_serai_le_president_de_tous_les_Francais_samba_remix_.mp4")
 
-@president.error
-async def president_error(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingPermissions):
-        await ctx.send(embed=erreur_permissions())
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.send("Commande inconnue.")
+    elif isinstance(error, discord.ext.commands.MissingPermissions):
+        await ctx.send("Vous ne disposez pas des permissions requises.")
+    else:
+        await ctx.send("Erreur inconnue. Contactez un administrateur.")
 
 #################
 ### LANCEMENT ###
