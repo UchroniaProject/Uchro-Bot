@@ -35,6 +35,7 @@ bot.log_channel_id = CONFIG["LOG_CHANNEL_ID"]
 ### COGS
 initial_extensions = [
     "cogs.bot_management",
+    "cogs.miscellaneous"
 ]
 
 #################
