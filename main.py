@@ -13,7 +13,7 @@ import utils.misc as misc
 ### CONFIGURATION
 
 CONFIG = misc.load_config()
-print(CONFIG)
+
 if CONFIG is None:
     print("Impossible de charger la configuration. Veuillez vérifier le fichier config.yml.")
     exit(1)

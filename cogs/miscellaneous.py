@@ -27,6 +27,29 @@ class Miscellaneous(commands.Cog):
     @discord.ext.commands.has_permissions(administrator=True)
     async def president(self, ctx):
         await ctx.send("https://cdn.discordapp.com/attachments/1105818718518395020/1123715876202483792/CHIRAC_-_Je_serai_le_president_de_tous_les_Francais_samba_remix_.mp4")
+    
+    @commands.command(name="test1", help="Test1")
+    async def test1(self, ctx):
+        # Création d'un bouton
+        button = discord.ui.Button(
+            label="Cliquez-moi !",
+            style=discord.ButtonStyle.primary,
+            custom_id="mon_bouton"
+        )
+
+        # Ajout d'un callback au bouton
+        button.callback = self.on_button_click
+
+        # Création d'une vue et ajout du bouton
+        view = discord.ui.View()
+        view.add_item(button)
+
+        # Envoi du message avec le bouton
+        await ctx.send("Voici un message avec un bouton :", view=view)
+
+    async def on_button_click(self, interaction: discord.Interaction):
+        """Callback pour le bouton"""
+        await interaction.response.send_message("Vous avez cliqué sur le bouton !", ephemeral=True)
         
 
 async def setup(bot):
